@@ -40,6 +40,7 @@
       <DependentUpon>GridDemoPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="LockPage.cs" />
+    <Compile Include="LockService.cs" />
     <Compile Include="LockViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
