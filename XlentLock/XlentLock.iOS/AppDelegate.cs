@@ -4,6 +4,14 @@ using System.Linq;
 
 using Foundation;
 using UIKit;
+using XLabs.Forms.Services;
+using XLabs.Ioc;
+using XLabs.Platform.Device;
+using XLabs.Platform.Mvvm;
+using XLabs.Platform.Services;
+using XLabs.Platform.Services.Email;
+using XLabs.Platform.Services.Media;
+using XLabs.Serialization;
 
 namespace XlentLock.iOS
 {
@@ -23,8 +31,26 @@ namespace XlentLock.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
-            LoadApplication(new App());
+           
+            var resolverContainer = new SimpleContainer();
 
+            resolverContainer.Register<IDevice>(t => AppleDevice.CurrentDevice)
+                .Register<IDisplay>(t => t.Resolve<IDevice>().Display)
+                .Register<IFontManager>(t => new FontManager(t.Resolve<IDisplay>()))
+                //.Register<IJsonSerializer, XLabs.Serialization.ServiceStack.JsonSerializer>()
+                //.Register<IJsonSerializer, Services.Serialization.SystemJsonSerializer>()
+                .Register<ITextToSpeechService, TextToSpeechService>()
+                .Register<IEmailService, EmailService>()
+                .Register<IMediaPicker, MediaPicker>()
+                //.Register<IXFormsApp>(app)
+                .Register<ISecureStorage, SecureStorage>()
+                .Register<IDependencyContainer>(t => resolverContainer);
+    //.Register<ISimpleCache>(
+    //    t => new SQLiteSimpleCache(new SQLite.Net.Platform.XamarinIOS.SQLitePlatformIOS(),
+    //        new SQLite.Net.SQLiteConnectionString(pathToDatabase, true), t.Resolve<IJsonSerializer>()));
+
+            Resolver.SetResolver(resolverContainer.GetResolver());
+            LoadApplication(new App());
             return base.FinishedLaunching(app, options);
         }
     }
