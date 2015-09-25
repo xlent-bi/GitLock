@@ -1,88 +1,228 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
-using XLabs;
-using XLabs.Forms.Behaviors;
 using XLabs.Forms.Mvvm;
+using XLabs.Ioc;
+using XLabs.Platform.Device;
 
 namespace XlentLock
 {
-    class LockPage : BaseView
+    internal class LockPage : BaseView
     {
         private Button[] _buttons;
 
         public Button[] Buttons
         {
-
             get
             {
-                return _buttons ?? (_buttons = new Button[]
+                return _buttons ?? (_buttons = new[]
                 {
-                    new Button()
+                    new Button
                     {
-                        Text = "1"
+                        Text = "1",
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        WidthRequest = ButtonWidth,
+                        BackgroundColor = Color.Gray,
+                                    Command = ButtonClickedCommand,
+                        CommandParameter = 1
                     },
-                    new Button()
+                    new Button
                     {
                         Text = "2"
+                        ,
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                        ,
+                        WidthRequest = ButtonWidth,
+
+                        BackgroundColor = Color.Gray,
+                                    Command = ButtonClickedCommand,
+                        CommandParameter = 2
                     },
-                    new Button()
+                    new Button
                     {
                         Text = "3"
+                        ,
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                        ,
+                        WidthRequest = ButtonWidth,
+
+                        BackgroundColor = Color.Gray,
+                                    Command = ButtonClickedCommand,
+                        CommandParameter = 3
                     },
-                    new Button()
+                    new Button
                     {
                         Text = "4"
+                        ,
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                        ,
+                        WidthRequest = ButtonWidth,
+
+                        BackgroundColor = Color.Gray,
+                                    Command = ButtonClickedCommand,
+                        CommandParameter = 4
                     },
-                    new Button()
+                    new Button
                     {
-                        Text = "5"
+                        Text = "5",
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                        ,
+                        WidthRequest = ButtonWidth,
+
+                        BackgroundColor = Color.Gray,
+                                    Command = ButtonClickedCommand,
+                        CommandParameter = 5
                     },
-                    new Button()
+                    new Button
                     {
-                        Text = "6"
+                        Text = "6",
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                        ,
+                        WidthRequest = ButtonWidth,
+
+                        BackgroundColor = Color.Gray,
+                                    Command = ButtonClickedCommand,
+                        CommandParameter = 6
                     },
-                    new Button()
+                    new Button
                     {
-                        Text = "7"
+                        Text = "7",
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                        ,
+                        WidthRequest = ButtonWidth,
+
+                        BackgroundColor = Color.Gray,
+                                    Command = ButtonClickedCommand,
+                        CommandParameter = 7
                     },
-                    new Button()
+                    new Button
                     {
-                        Text = "8"
+                        Text = "8",
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                        ,
+                        MinimumWidthRequest = ButtonWidth,
+                        MinimumHeightRequest = 30,
+
+                        BackgroundColor = Color.Gray,
+                                    Command = ButtonClickedCommand,
+                        CommandParameter = 8
                     },
-                    new Button()
+                    new Button
                     {
-                        Text = "9"
+                        Text = "9",
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                        ,
+                        MinimumWidthRequest = ButtonWidth,
+                        MinimumHeightRequest = 30,
+
+                        BackgroundColor = Color.Gray,
+                        Command = ButtonClickedCommand,
+                        CommandParameter = 9
                     }
                 });
             }
-            set {  _buttons = value; }
+            set { _buttons = value; }
+        }
+        public int ButtonWidth => CalculateWidth();
+
+        private int CalculateWidth()
+        {
+            var device = Resolver.Resolve<IDevice>();
+            var displayWidth = device.Display.Width;
+            return (displayWidth/3) - 10;
         }
 
+        public StackLayout MainStackLayout { get; set; }
 
-        public Grid ButtonGridLayout;
-
-        public StackLayout MainStackLayout;
-
-		
-
+        public Label CodeLabel { get
+        {
+            return new Label()
+            {
+                Text = "1",
+                FontSize = 20,
+                TextColor = Color.Black
+            };
+        } set {} }    
 
         public LockPage()
         {
-            ButtonGridLayout = new Grid()
+            BindingContext = new LockViewModel();
+
+            CodeLabel.SetBinding(Label.TextProperty, "Code.Text");
+
+
+            NumberGrid = new Grid
             {
-                RowDefinitions = new RowDefinitionCollection() { }
+                VerticalOptions = LayoutOptions.FillAndExpand, RowDefinitions =
+                {
+                    new RowDefinition {Height = new GridLength(ButtonWidth, GridUnitType.Absolute)}, new RowDefinition {Height = new GridLength(ButtonWidth, GridUnitType.Absolute)}, new RowDefinition {Height = new GridLength(ButtonWidth, GridUnitType.Absolute)}
+                },
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition {Width = new GridLength(ButtonWidth, GridUnitType.Absolute)}, new ColumnDefinition {Width = new GridLength(ButtonWidth, GridUnitType.Absolute)}, new ColumnDefinition {Width = new GridLength(ButtonWidth, GridUnitType.Absolute)}
+                }
+            };
 
-            }
-            
-            
-         
+            NumberGrid.Children.Add(Buttons[0], 0, 1);
+
+            NumberGrid.Children.Add(Buttons[1], 1, 1);
+
+            NumberGrid.Children.Add(Buttons[2], 2, 1);
 
 
+            NumberGrid.Children.Add(Buttons[3], 0, 2);
+
+
+            NumberGrid.Children.Add(Buttons[4], 1, 2);
+
+
+            NumberGrid.Children.Add(Buttons[5], 2, 2);
+
+            NumberGrid.Children.Add(Buttons[6], 0, 3);
+
+
+            NumberGrid.Children.Add(Buttons[7], 1, 3);
+
+            NumberGrid.Children.Add(Buttons[8], 2, 3);
+
+            // Accomodate iPhone status bar.
+            Padding = new Thickness(10, Device.OnPlatform(20, 0, 0), 10, 5);
+
+            MainStackLayout = new StackLayout()
+            {
+                
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { CodeLabel, NumberGrid },
+                
+            };
+
+            // Build the page.
+            Content = MainStackLayout;
         }
 
+        public Grid NumberGrid { get; set; }
+
+        public Command ButtonClickedCommand
+        {
+            get
+            {
+                return new Command((parameter) =>
+                {
+                    var number = (int) parameter;
+                    var vm = (LockViewModel) BindingContext;
+                    vm.AddCodeNumber(number);
+                });
+            }
+            set { }
+        }
     }
 }
