@@ -42,6 +42,7 @@
     <Compile Include="LockPage.cs" />
     <Compile Include="LockViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\HeaderView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GettingStarted.Xamarin" />

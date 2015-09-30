@@ -1,5 +1,4 @@
-﻿using System;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using XLabs.Forms.Mvvm;
 using XLabs.Ioc;
 using XLabs.Platform.Device;
@@ -23,7 +22,7 @@ namespace XlentLock
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         WidthRequest = ButtonWidth,
                         BackgroundColor = Color.Gray,
-                                    Command = ButtonClickedCommand,
+                        Command = ButtonClickedCommand,
                         CommandParameter = 1
                     },
                     new Button
@@ -34,9 +33,8 @@ namespace XlentLock
                         HorizontalOptions = LayoutOptions.FillAndExpand
                         ,
                         WidthRequest = ButtonWidth,
-
                         BackgroundColor = Color.Gray,
-                                    Command = ButtonClickedCommand,
+                        Command = ButtonClickedCommand,
                         CommandParameter = 2
                     },
                     new Button
@@ -47,9 +45,8 @@ namespace XlentLock
                         HorizontalOptions = LayoutOptions.FillAndExpand
                         ,
                         WidthRequest = ButtonWidth,
-
                         BackgroundColor = Color.Gray,
-                                    Command = ButtonClickedCommand,
+                        Command = ButtonClickedCommand,
                         CommandParameter = 3
                     },
                     new Button
@@ -60,9 +57,8 @@ namespace XlentLock
                         HorizontalOptions = LayoutOptions.FillAndExpand
                         ,
                         WidthRequest = ButtonWidth,
-
                         BackgroundColor = Color.Gray,
-                                    Command = ButtonClickedCommand,
+                        Command = ButtonClickedCommand,
                         CommandParameter = 4
                     },
                     new Button
@@ -72,9 +68,8 @@ namespace XlentLock
                         HorizontalOptions = LayoutOptions.FillAndExpand
                         ,
                         WidthRequest = ButtonWidth,
-
                         BackgroundColor = Color.Gray,
-                                    Command = ButtonClickedCommand,
+                        Command = ButtonClickedCommand,
                         CommandParameter = 5
                     },
                     new Button
@@ -84,9 +79,8 @@ namespace XlentLock
                         HorizontalOptions = LayoutOptions.FillAndExpand
                         ,
                         WidthRequest = ButtonWidth,
-
                         BackgroundColor = Color.Gray,
-                                    Command = ButtonClickedCommand,
+                        Command = ButtonClickedCommand,
                         CommandParameter = 6
                     },
                     new Button
@@ -96,9 +90,8 @@ namespace XlentLock
                         HorizontalOptions = LayoutOptions.FillAndExpand
                         ,
                         WidthRequest = ButtonWidth,
-
                         BackgroundColor = Color.Gray,
-                                    Command = ButtonClickedCommand,
+                        Command = ButtonClickedCommand,
                         CommandParameter = 7
                     },
                     new Button
@@ -109,9 +102,8 @@ namespace XlentLock
                         ,
                         MinimumWidthRequest = ButtonWidth,
                         MinimumHeightRequest = 30,
-
                         BackgroundColor = Color.Gray,
-                                    Command = ButtonClickedCommand,
+                        Command = ButtonClickedCommand,
                         CommandParameter = 8
                     },
                     new Button
@@ -122,15 +114,46 @@ namespace XlentLock
                         ,
                         MinimumWidthRequest = ButtonWidth,
                         MinimumHeightRequest = 30,
-
                         BackgroundColor = Color.Gray,
                         Command = ButtonClickedCommand,
                         CommandParameter = 9
+                    },
+                    new Button
+                    {
+                        Text = "",
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        MinimumWidthRequest = ButtonWidth,
+                        BackgroundColor = Color.Gray,
+                        Command = ButtonClickedCommand,
+                        CommandParameter = "*"
+                    },
+                    new Button
+                    {
+                        Text = "0",
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand
+                        ,
+                        MinimumWidthRequest = ButtonWidth,
+                        BackgroundColor = Color.Gray,
+                        Command = ButtonClickedCommand,
+                        CommandParameter = 0
+                    },
+                    new Button
+                    {
+                        Text = "OK",
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        MinimumWidthRequest = ButtonWidth,
+                        BackgroundColor = Color.Gray,
+                        Command = ButtonClickedCommand,
+                        CommandParameter = "OK"
                     }
                 });
             }
             set { _buttons = value; }
         }
+
         public int ButtonWidth => CalculateWidth();
 
         private int CalculateWidth()
@@ -142,15 +165,19 @@ namespace XlentLock
 
         public StackLayout MainStackLayout { get; set; }
 
-        public Label CodeLabel { get
+        public Label CodeLabel
         {
-            return new Label()
+            get
             {
-                Text = "1",
-                FontSize = 20,
-                TextColor = Color.Black
-            };
-        } set {} }    
+                return new Label
+                {
+                    Text = "1",
+                    FontSize = 20,
+                    TextColor = Color.Black
+                };
+            }
+            set { }
+        }
 
         public LockPage()
         {
@@ -159,17 +186,7 @@ namespace XlentLock
             CodeLabel.SetBinding(Label.TextProperty, "Code.Text");
 
 
-            NumberGrid = new Grid
-            {
-                VerticalOptions = LayoutOptions.FillAndExpand, RowDefinitions =
-                {
-                    new RowDefinition {Height = new GridLength(ButtonWidth, GridUnitType.Absolute)}, new RowDefinition {Height = new GridLength(ButtonWidth, GridUnitType.Absolute)}, new RowDefinition {Height = new GridLength(ButtonWidth, GridUnitType.Absolute)}
-                },
-                ColumnDefinitions =
-                {
-                    new ColumnDefinition {Width = new GridLength(ButtonWidth, GridUnitType.Absolute)}, new ColumnDefinition {Width = new GridLength(ButtonWidth, GridUnitType.Absolute)}, new ColumnDefinition {Width = new GridLength(ButtonWidth, GridUnitType.Absolute)}
-                }
-            };
+            NumberGrid = new Grid();
 
             NumberGrid.Children.Add(Buttons[0], 0, 1);
 
@@ -193,20 +210,23 @@ namespace XlentLock
 
             NumberGrid.Children.Add(Buttons[8], 2, 3);
 
+            NumberGrid.Children.Add(Buttons[9], 0, 4);
+
+            NumberGrid.Children.Add(Buttons[10], 1, 4);
+            NumberGrid.Children.Add(Buttons[9], 2, 4);
+
             // Accomodate iPhone status bar.
             Padding = new Thickness(10, Device.OnPlatform(20, 0, 0), 10, 5);
 
-            MainStackLayout = new StackLayout()
+            MainStackLayout = new StackLayout
             {
-                
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = { CodeLabel, NumberGrid },
-                
+                Children = {NumberGrid}
             };
 
             // Build the page.
-            Content = MainStackLayout;
+            Content = NumberGrid;
         }
 
         public Grid NumberGrid { get; set; }
@@ -215,7 +235,7 @@ namespace XlentLock
         {
             get
             {
-                return new Command((parameter) =>
+                return new Command(parameter =>
                 {
                     var number = (int) parameter;
                     var vm = (LockViewModel) BindingContext;
