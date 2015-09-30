@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using System.Windows.Input;
+using Xamarin.Forms;
 using XLabs.Forms.Mvvm;
 using XLabs.Ioc;
 using XLabs.Platform.Device;
@@ -8,6 +9,7 @@ namespace XlentLock
     internal class LockPage : BaseView
     {
         private Button[] _buttons;
+        private Label _codeLabel;
 
         public Button[] Buttons
         {
@@ -124,9 +126,10 @@ namespace XlentLock
                         VerticalOptions = LayoutOptions.FillAndExpand,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         MinimumWidthRequest = ButtonWidth,
+
                         BackgroundColor = Color.Gray,
                         Command = ButtonClickedCommand,
-                        CommandParameter = "*"
+                        CommandParameter = 12
                     },
                     new Button
                     {
@@ -146,13 +149,14 @@ namespace XlentLock
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         MinimumWidthRequest = ButtonWidth,
                         BackgroundColor = Color.Gray,
-                        Command = ButtonClickedCommand,
-                        CommandParameter = "OK"
+                        Command = OkClickedCommand,
                     }
                 });
             }
             set { _buttons = value; }
         }
+
+        public ICommand OkClickedCommand { get; set; }
 
         public int ButtonWidth => CalculateWidth();
 
@@ -169,12 +173,14 @@ namespace XlentLock
         {
             get
             {
-                return new Label
+                return _codeLabel ?? (_codeLabel = new Label()
                 {
-                    Text = "1",
+                    Text = "",
+                    TextColor = Color.Black,
+                    BackgroundColor = Color.White,
                     FontSize = 20,
-                    TextColor = Color.Black
-                };
+                    HorizontalOptions = LayoutOptions.CenterAndExpand
+                });
             }
             set { }
         }
@@ -183,12 +189,16 @@ namespace XlentLock
         {
             BindingContext = new LockViewModel();
 
-            CodeLabel.SetBinding(Label.TextProperty, "Code.Text");
+
+            NumberGrid = new Grid()
+            {
+                
+            };
 
 
-            NumberGrid = new Grid();
 
-            NumberGrid.Children.Add(Buttons[0], 0, 1);
+
+        NumberGrid.Children.Add(Buttons[0], 0, 1);
 
             NumberGrid.Children.Add(Buttons[1], 1, 1);
 
@@ -213,23 +223,84 @@ namespace XlentLock
             NumberGrid.Children.Add(Buttons[9], 0, 4);
 
             NumberGrid.Children.Add(Buttons[10], 1, 4);
-            NumberGrid.Children.Add(Buttons[9], 2, 4);
+            NumberGrid.Children.Add(Buttons[11], 2, 4);
 
             // Accomodate iPhone status bar.
             Padding = new Thickness(10, Device.OnPlatform(20, 0, 0), 10, 5);
 
             MainStackLayout = new StackLayout
             {
-                VerticalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.End,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children = {NumberGrid}
+                Children =
+                {
+                    LabelAndEraseLayout,
+                    NumberGrid
+                }
             };
 
             // Build the page.
-            Content = NumberGrid;
+            Content = MainStackLayout;
         }
 
         public Grid NumberGrid { get; set; }
+
+        public Button EraseButton
+        {
+            get
+            {
+                return new Button()
+                {
+                    Text = "<",
+                    Command = EraseCommand,
+                    HorizontalOptions = LayoutOptions.End,
+                    HeightRequest = 40,
+                    WidthRequest = 40,
+                    BackgroundColor = Color.White,
+                   TextColor = Color.Black
+                };
+            }
+            set { }
+        }
+
+        public ICommand EraseCommand
+        {
+            get
+            {
+                return new Command(() =>
+                {
+                    CodeLabel.Text = "";
+                });
+            }
+            set
+            {
+            }
+        }
+
+        public StackLayout LabelAndEraseLayout
+        {
+            get
+            {
+                return new StackLayout()
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    Children =
+                    {
+                        new ContentView
+                        {
+                            BackgroundColor = Color.White,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            Content = CodeLabel,
+                            MinimumHeightRequest = 20,
+
+                            
+                        },
+                        EraseButton
+                    }
+                };
+            }
+            set { }
+        }
 
         public Command ButtonClickedCommand
         {
@@ -240,6 +311,9 @@ namespace XlentLock
                     var number = (int) parameter;
                     var vm = (LockViewModel) BindingContext;
                     vm.AddCodeNumber(number);
+                    var oldCode = CodeLabel.Text;
+                    var newCode = oldCode + number.ToString();
+                    CodeLabel.Text = newCode;
                 });
             }
             set { }

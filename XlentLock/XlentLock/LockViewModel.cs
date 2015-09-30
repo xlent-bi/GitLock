@@ -20,7 +20,6 @@ namespace XlentLock
             {
                 return _code ?? (_code = new Label()
                 {
-                    Text = ""
                 });
             }
             set { SetProperty(ref _code, value); }
@@ -29,13 +28,14 @@ namespace XlentLock
 
         public void AddCodeNumber(int number)
         {
-            if (Code.Text.Length < 5)
-            {
-                Code.Text = Code.Text + number;
-               
+                var currentCode = Code.Text + number;
 
-                Debug.WriteLine(Code);
+            Code = new Label()
+            {
+                Text = currentCode
+            };
+
+                Debug.WriteLine(Code.Text);
             }
         }
-    }
 }
