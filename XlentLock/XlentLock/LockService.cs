@@ -25,7 +25,7 @@ namespace XlentLock
 
         public Enum Guess(int guess)
         {
-            Enum retVal;
+            Enum retVal = LockResponse.Locked;
             if(guess == _secretNum)
             {
                 retVal = LockResponse.Unlocked;

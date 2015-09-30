@@ -5,6 +5,7 @@ using Android.Content.PM;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using AdvancedTimer.Forms.Plugin.Abstractions;
 using Android.OS;
 using XLabs.Forms.Services;
 using XLabs.Ioc;
@@ -34,7 +35,8 @@ namespace XlentLock.Droid
                 //.Register<IEmailService, EmailService>()
                 .Register<IMediaPicker, MediaPicker>()
                 .Register<ITextToSpeechService, TextToSpeechService>()
-                .Register<IDependencyContainer>(resolverContainer);
+                .Register<IDependencyContainer>(resolverContainer)
+                .Register<IAdvancedTimer>(t => new AdvancedTimer.Forms.Plugin.Droid.AdvancedTimerImplementation());
                 //.Register<IXFormsApp>(app)
                 //.Register<ISecureStorage>(t => new KeyVaultStorage(t.Resolve<IDevice>().Id.ToCharArray()))
                 //.Register<ISimpleCache>(
@@ -46,6 +48,7 @@ namespace XlentLock.Droid
 
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
+            AdvancedTimer.Forms.Plugin.Droid.AdvancedTimerImplementation.Init();
             LoadApplication(new App());
         }
     }

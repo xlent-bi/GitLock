@@ -13,7 +13,6 @@ namespace XlentLock
         {
             // The root page of your application
             MainPage = new LockPage();
-            
         }
 
         protected override void OnStart()

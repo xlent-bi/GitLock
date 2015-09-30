@@ -1,4 +1,9 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Xml;
+using AdvancedTimer.Forms.Plugin.Abstractions;
 using Xamarin.Forms;
 using XLabs.Forms.Mvvm;
 using XLabs.Ioc;
@@ -8,9 +13,21 @@ namespace XlentLock
 {
     internal class LockPage : BaseView
     {
+
+        private IAdvancedTimer _advancedTimer;
+
         private Button[] _buttons;
         private Label _codeLabel;
+        private Label _responsLabel;
+        private LockService _lockService;
+        private Label _timerLabel;
+        private int milliSec;
+        private int sec;
+        private int rest;
+        private Label _secLabel;
+        private Label _decLabel;
 
+        public Label TimerLabel { get; set; }
         public Button[] Buttons
         {
             get
@@ -156,7 +173,101 @@ namespace XlentLock
             set { _buttons = value; }
         }
 
-        public ICommand OkClickedCommand { get; set; }
+        public ICommand OkClickedCommand
+        {
+            get
+            {
+                return new Command(() =>
+                {
+                    try
+                    {
+                        var respons =  _lockService.Guess(int.Parse(CodeLabel.Text)).ToString();
+                        LatestGuess = CodeLabel.Text;
+                        if (respons == LockService.LockResponse.GuessHigher.ToString())
+                        {
+                            ResponsLabel.Text = "GUESS HIGHER";
+                        }
+                        else if (respons == LockService.LockResponse.GuessLower.ToString())
+                        {
+                            ResponsLabel.Text = "GUESS LOWER";
+                        }
+                        else if (respons == LockService.LockResponse.Unlocked.ToString())
+                        {
+                            HasWon = true;
+                            GameCompleted();
+                        }
+
+                        Debug.WriteLine(LatestGuess);
+
+                        CodeLabel.Text = "Enter Number";
+                    }
+                    catch (Exception ee)
+                    {
+
+                        ResponsLabel.Text = "Not a valid input try again";
+                        CodeLabel.Text = "";
+                        Debug.WriteLine(ee.StackTrace);
+                    }
+                   
+                });
+            }
+            set { }
+        }
+
+        public bool HasWon;
+
+        private string _latestGuess;
+
+        public string LatestGuess
+        {
+            get { return _latestGuess ?? (_latestGuess = "-1"); }
+            set { }
+        }
+
+        private async void GameCompleted()
+        {
+            if (HasWon)       
+            { 
+                ResponsLabel.Text = "YOU GUESSED CORRECT";
+               await DisplayAlert("You Guessed Correct", "Enter Details on next page too win a MOTO360", "Sign up");
+               Navigation.PushAsync(new ContentPage());
+            }
+
+            
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                var wantToPlayAgian = DisplayAlert("You Loose", "Try Agian!", "Yes", "No?");
+                Reset();
+            });
+        }
+
+        private void Reset()
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                App.Current.MainPage = new LockPage();
+            });
+           
+        }
+
+        public Label SecLabel
+        {
+            get
+            {
+                return _secLabel ?? (_secLabel = new Label()
+                {
+                    Text = "30",
+                    FontSize = 100,
+                    FontAttributes = FontAttributes.Bold,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand,
+                    VerticalOptions = LayoutOptions.CenterAndExpand
+                });
+            }
+            set { }
+        }
+
+        public StackLayout ClockStackLayout { get; set; }
+
 
         public int ButtonWidth => CalculateWidth();
 
@@ -175,7 +286,7 @@ namespace XlentLock
             {
                 return _codeLabel ?? (_codeLabel = new Label()
                 {
-                    Text = "",
+                    Text = "Enter Number",
                     TextColor = Color.Black,
                     BackgroundColor = Color.White,
                     FontSize = 20,
@@ -187,8 +298,30 @@ namespace XlentLock
 
         public LockPage()
         {
-            BindingContext = new LockViewModel();
 
+            BindingContext = new LockViewModel();
+            sec = 30;
+            rest = 00;
+            milliSec = 30000;
+
+            _advancedTimer = Resolver.Resolve<IAdvancedTimer>();
+            _advancedTimer.initTimer(1000, (sender, args) =>
+            {
+                sec--;
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                {
+                    SecLabel.Text = sec.ToString();
+                });
+                Debug.WriteLine(milliSec);
+                if (sec == 0)
+                {
+                    _advancedTimer.stopTimer();
+                    GameCompleted();
+                }
+
+            }, true);
+
+            
 
             NumberGrid = new Grid()
             {
@@ -196,6 +329,7 @@ namespace XlentLock
             };
 
 
+            _lockService = new LockService();
 
 
         NumberGrid.Children.Add(Buttons[0], 0, 1);
@@ -228,19 +362,146 @@ namespace XlentLock
             // Accomodate iPhone status bar.
             Padding = new Thickness(10, Device.OnPlatform(20, 0, 0), 10, 5);
 
+            ClockStackLayout = new StackLayout()
+            {
+                Orientation = StackOrientation.Vertical,
+                Children =
+                {
+                    SecLabel,
+
+                }
+            };
+
+            if (Device.Idiom == TargetIdiom.Phone)
+            {   
             MainStackLayout = new StackLayout
             {
                 VerticalOptions = LayoutOptions.End,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Children =
                 {
+                    ClockStackLayout,
+                    ResponsLabel,
                     LabelAndEraseLayout,
                     NumberGrid
-                }
+                },
+                Padding = new Thickness(0,0,0,10)
             };
 
-            // Build the page.
+            }
+            if (Device.Idiom == TargetIdiom.Tablet)
+            {
+               var rightStack = new StackLayout
+                {
+                    VerticalOptions = LayoutOptions.End,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Children =
+                {
+                    ClockStackLayout,
+                    ResponsLabel,
+                    LabelAndEraseLayout,
+                    NumberGrid
+                },
+                    Padding = new Thickness(0, 0, 0, 10)
+                };
+
+                var width = Resolver.Resolve<IDevice>().Display.Width;
+
+
+                var leftImage = new Image()
+                {
+                    Source = "iconlogo1024x500.png",
+                    Aspect = Aspect.Fill,
+                    VerticalOptions = LayoutOptions.CenterAndExpand,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand,
+                    WidthRequest = width/2
+                };
+
+                var leftContentView = new ContentView()
+                {
+                    Content = leftImage,
+
+                    MinimumWidthRequest = Width / 2,
+                    BackgroundColor = Color.White,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    VerticalOptions = LayoutOptions.FillAndExpand
+                };
+                var leftStackLayout = new StackLayout()
+                {
+                    Orientation = StackOrientation.Vertical,
+                    Children =
+                    {
+                        leftContentView,
+                        new Button()
+                        {
+                            Text = "Reset",
+                            BorderColor = Color.Green,
+                            BorderRadius = 5,
+                            Command = new Command(() =>
+                            {
+                                Reset();
+                            }),
+                            VerticalOptions = LayoutOptions.End
+                        }
+                        
+                    },
+                    VerticalOptions = LayoutOptions.FillAndExpand,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+   
+                
+
+                MainStackLayout = new StackLayout()
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand,
+                    VerticalOptions = LayoutOptions.CenterAndExpand,
+                    Children =
+                    {
+                        leftStackLayout,
+                        rightStack
+                    }
+                };
+
+
+
+
+            }
+
+
+
+
             Content = MainStackLayout;
+            //_advancedTimer.startTimer();
+        }
+
+        public bool hasNotStarted = true;
+        public Label ResponsLabel
+        {
+            get
+            {
+                return _responsLabel ?? (_responsLabel = new Label()
+                {
+                    Text = "GUESS A NUMBER TO UNLOCK THE SAFE",
+                    HorizontalOptions = LayoutOptions.Center
+                });
+            }
+            set { }
+        }
+
+        public Image SafeImage
+        {
+            get
+            {
+                return new Image()
+                {
+                    Source = "safe-icon1.png",
+                    Aspect = Aspect.AspectFill,
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    VerticalOptions = LayoutOptions.FillAndExpand
+                };
+            }
+            set { }
         }
 
         public Grid NumberGrid { get; set; }
@@ -314,9 +575,20 @@ namespace XlentLock
                     var oldCode = CodeLabel.Text;
                     var newCode = oldCode + number.ToString();
                     CodeLabel.Text = newCode;
+                 
+                    if (hasNotStarted)
+                    {
+                        _advancedTimer.startTimer();
+                        hasNotStarted = false;
+                    }
                 });
             }
             set { }
+        }
+
+        public static void timerElapsed(object o, EventArgs e)
+        {
+
         }
     }
 }

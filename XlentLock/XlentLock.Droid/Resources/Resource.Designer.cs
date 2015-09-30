@@ -177,6 +177,12 @@ namespace XlentLock.Droid
 			// aapt resource value: 0x7f020003
 			public const int icon = 2130837507;
 			
+			// aapt resource value: 0x7f020004
+			public const int iconlogo1024x500 = 2130837508;
+			
+			// aapt resource value: 0x7f020005
+			public const int safeicon1 = 2130837509;
+			
 			static Drawable()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using AdvancedTimer.Forms.Plugin.Abstractions;
 using Foundation;
 using UIKit;
 using XLabs.Forms.Services;
@@ -44,13 +44,16 @@ namespace XlentLock.iOS
                 .Register<IMediaPicker, MediaPicker>()
                 //.Register<IXFormsApp>(app)
                 .Register<ISecureStorage, SecureStorage>()
-                .Register<IDependencyContainer>(t => resolverContainer);
+                .Register<IDependencyContainer>(t => resolverContainer)
+                .Register<IAdvancedTimer>(t => new AdvancedTimer.Forms.Plugin.iOS.AdvancedTimerImplementation());
     //.Register<ISimpleCache>(
     //    t => new SQLiteSimpleCache(new SQLite.Net.Platform.XamarinIOS.SQLitePlatformIOS(),
     //        new SQLite.Net.SQLiteConnectionString(pathToDatabase, true), t.Resolve<IJsonSerializer>()));
 
             Resolver.SetResolver(resolverContainer.GetResolver());
+            AdvancedTimer.Forms.Plugin.iOS.AdvancedTimerImplementation.Init();
             LoadApplication(new App());
+
             return base.FinishedLaunching(app, options);
         }
     }
