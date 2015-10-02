@@ -181,6 +181,9 @@ namespace XlentLock
                 {
                     try
                     {
+                        if (CodeLabel.Text != null && CodeLabel.Text != "" && CodeLabel.Text != " ")
+                        {
+                            
                         var respons =  _lockService.Guess(int.Parse(CodeLabel.Text)).ToString();
                         LatestGuess = CodeLabel.Text;
                         if (respons == LockService.LockResponse.GuessHigher.ToString())
@@ -199,11 +202,17 @@ namespace XlentLock
 
                         Debug.WriteLine(LatestGuess);
 
-                        CodeLabel.Text = "Enter Number";
+                        CodeLabel.Text = "";
+                        }
+                        else
+                        {
+                            ResponsLabel.Text = "Unvalid Input";
+                        }
                     }
                     catch (Exception ee)
                     {
 
+                        
                         ResponsLabel.Text = "Not a valid input try again";
                         CodeLabel.Text = "";
                         Debug.WriteLine(ee.StackTrace);
@@ -226,11 +235,15 @@ namespace XlentLock
 
         private async void GameCompleted()
         {
+
+            var time = 30 - sec;
+
             if (HasWon)       
             { 
                 ResponsLabel.Text = "YOU GUESSED CORRECT";
-               await DisplayAlert("You Guessed Correct", "Enter Details on next page too win a MOTO360", "Sign up");
-               Navigation.PushAsync(new ContentPage());
+                _advancedTimer.stopTimer();
+                await DisplayAlert("You Guessed Correct in "+time +"seconds" , "Enter Details on next page too win a MOTO360", "Sign up");
+                Reset();
             }
 
             
@@ -243,6 +256,7 @@ namespace XlentLock
 
         private void Reset()
         {
+            sec = 30;
             Device.BeginInvokeOnMainThread(() =>
             {
                 App.Current.MainPage = new LockPage();
@@ -286,7 +300,7 @@ namespace XlentLock
             {
                 return _codeLabel ?? (_codeLabel = new Label()
                 {
-                    Text = "Enter Number",
+                    Text = "",
                     TextColor = Color.Black,
                     BackgroundColor = Color.White,
                     FontSize = 20,
@@ -299,6 +313,7 @@ namespace XlentLock
         public LockPage()
         {
 
+            NavigationPage.SetHasNavigationBar(this, false);
             BindingContext = new LockViewModel();
             sec = 30;
             rest = 00;
@@ -312,6 +327,16 @@ namespace XlentLock
                 {
                     SecLabel.Text = sec.ToString();
                 });
+                if (sec == 5)
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        SecLabel.TextColor = Color.Red;
+                    });
+                 
+                }
+                
+
                 Debug.WriteLine(milliSec);
                 if (sec == 0)
                 {
@@ -394,7 +419,6 @@ namespace XlentLock
                var rightStack = new StackLayout
                 {
                     VerticalOptions = LayoutOptions.End,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
                     Children =
                 {
                     ClockStackLayout,
@@ -411,7 +435,7 @@ namespace XlentLock
                 var leftImage = new Image()
                 {
                     Source = "iconlogo1024x500.png",
-                    Aspect = Aspect.Fill,
+                    Aspect = Aspect.AspectFill,
                     VerticalOptions = LayoutOptions.CenterAndExpand,
                     HorizontalOptions = LayoutOptions.CenterAndExpand,
                     WidthRequest = width/2
@@ -422,9 +446,7 @@ namespace XlentLock
                     Content = leftImage,
 
                     MinimumWidthRequest = Width / 2,
-                    BackgroundColor = Color.White,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    VerticalOptions = LayoutOptions.FillAndExpand
+                    BackgroundColor = Color.White
                 };
                 var leftStackLayout = new StackLayout()
                 {
@@ -445,8 +467,7 @@ namespace XlentLock
                         }
                         
                     },
-                    VerticalOptions = LayoutOptions.FillAndExpand,
-                    HorizontalOptions = LayoutOptions.FillAndExpand
+                    VerticalOptions = LayoutOptions.FillAndExpand
                 };
    
                 

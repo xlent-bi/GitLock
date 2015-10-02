@@ -12,7 +12,8 @@ namespace XlentLock
         public App()
         {
             // The root page of your application
-            MainPage = new LockPage();
+            var lockpage = new LockPage();
+            MainPage = new NavigationPage(lockpage);
         }
 
         protected override void OnStart()
