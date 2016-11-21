@@ -29,6 +29,7 @@ namespace XlentLock
         private readonly int milliSec;
         private int rest;
         private int sec;
+        private int _fontSize;
 
         public LockPage()
         {
@@ -192,6 +193,20 @@ namespace XlentLock
 
         public Label TimerLabel { get; set; }
 
+        public int FontSize
+        {
+            get
+            {
+                if (Device.Idiom == TargetIdiom.Phone)
+                {
+                    return 20;
+                }
+
+                return 50;
+            }
+            set { _fontSize = value; }
+        }
+
         public Button[] Buttons
         {
             get
@@ -201,7 +216,7 @@ namespace XlentLock
                            new Button
                            {
                                Text = "1",
-                               FontSize = 50,
+                               FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -214,7 +229,7 @@ namespace XlentLock
                            new Button
                            {
                                Text = "2",
-                               FontSize = 50,
+                               FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -226,7 +241,7 @@ namespace XlentLock
                            new Button
                            {
                                Text = "3",
-                               FontSize = 50,
+                               FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -238,7 +253,7 @@ namespace XlentLock
                            new Button
                            {
                                Text = "4",
-                               FontSize = 50,
+                               FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand
@@ -251,7 +266,7 @@ namespace XlentLock
                            new Button
                            {
                                Text = "5",
-                               FontSize = 50,
+                               FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -263,7 +278,7 @@ namespace XlentLock
                            new Button
                            {
                                Text = "6",
-                               FontSize = 50,
+                               FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -275,7 +290,7 @@ namespace XlentLock
                            new Button
                            {
                                Text = "7",
-                               FontSize = 50,
+                               FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -287,7 +302,7 @@ namespace XlentLock
                            new Button
                            {
                                Text = "8",
-                               FontSize = 50,
+                               FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -300,7 +315,7 @@ namespace XlentLock
                            new Button
                            {
                                Text = "9",
-                               FontSize = 50,
+                               FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -313,7 +328,7 @@ namespace XlentLock
                            new Button
                            {
                                Text = "",
-                               FontSize = 50,
+                               FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -325,7 +340,7 @@ namespace XlentLock
                            new Button
                            {
                                Text = "0",
-                               FontSize = 50,
+                               FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -337,7 +352,7 @@ namespace XlentLock
                            new Button
                            {
                                Text = "OK",
-                               FontSize = 50,
+                               FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -365,13 +380,13 @@ namespace XlentLock
                             if (respons == LockService.LockResponse.GuessHigher.ToString())
                             {
                                 ResponsLabel.Text = "GUESS HIGHER";
-                                ResponsLabel.FontSize = 50;
+                                ResponsLabel.FontSize = FontSize;
                                 ResponsLabel.FontAttributes = FontAttributes.Bold;
                             }
                             else if (respons == LockService.LockResponse.GuessLower.ToString())
                             {
                                 ResponsLabel.Text = "GUESS LOWER";
-                                ResponsLabel.FontSize = 50;
+                                ResponsLabel.FontSize = FontSize;
                                 ResponsLabel.FontAttributes = FontAttributes.Bold;
                             }
                             else if (respons == LockService.LockResponse.Unlocked.ToString())
@@ -439,7 +454,7 @@ namespace XlentLock
                            TextColor = Color.Black,
                            BackgroundColor = Color.White,
                            HeightRequest = 100,
-                           FontSize = 50,
+                           FontSize = FontSize,
                            HorizontalOptions = LayoutOptions.CenterAndExpand,
                            VerticalOptions = LayoutOptions.CenterAndExpand
                        });
@@ -455,7 +470,7 @@ namespace XlentLock
                        {
                            Text = "GUESS THE CORRECT NUMBER BETWEEN 0-1000",
                            HorizontalOptions = LayoutOptions.Center,
-                           FontSize = 30
+                           FontSize = 15
                        });
             }
             set { }
