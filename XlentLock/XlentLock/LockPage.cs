@@ -327,14 +327,14 @@ namespace XlentLock
                            },
                            new Button
                            {
-                               Text = "",
+                               Text = "CE",
                                FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                MinimumWidthRequest = ButtonWidth,
-                               BackgroundColor = Color.Gray,
-                               Command = ButtonClickedCommand,
+                               BackgroundColor = Color.FromRgb(244,90,36),
+                               Command = EraseCommand,
                                CommandParameter = 12
                            },
                            new Button
@@ -357,7 +357,7 @@ namespace XlentLock
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                MinimumWidthRequest = ButtonWidth,
-                               BackgroundColor = Color.Green,
+                               BackgroundColor = Color.FromRgb(244,90,36),
                                Command = OkClickedCommand
                            }
                        });
@@ -401,7 +401,7 @@ namespace XlentLock
                         }
                         else
                         {
-                            ResponsLabel.Text = "Unvalid Input";
+                            ResponsLabel.Text = "Invalid Input";
                         }
                     }
                     catch (Exception ee)
@@ -571,14 +571,14 @@ namespace XlentLock
             {
                 ResponsLabel.Text = "YOU GUESSED CORRECT";
                 _advancedTimer.stopTimer();
-                await DisplayAlert("You Guessed Correct in " + time + "seconds", "Fill the form please", "OK");
+                await DisplayAlert("You guessed the correct number in " + time + " seconds", "Please fill in the competition form on one of our computers", "OK");
                 Reset();
             }
             else
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    var wantToPlayAgian = DisplayAlert("You Loose", "Try Agian!", "Yes", "No?");
+                    var wantToPlayAgian = DisplayAlert("You Loose", "Try Again?", "Yes", "No");
                     Reset();
                 });
             }
