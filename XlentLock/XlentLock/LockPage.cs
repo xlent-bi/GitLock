@@ -30,6 +30,8 @@ namespace XlentLock
         private int rest;
         private int sec;
         private int _fontSize;
+        private Color _xlentOrange;
+        private Color _xlentGray;
 
         public LockPage()
         {
@@ -39,6 +41,8 @@ namespace XlentLock
             rest = 00;
             milliSec = 30000;
 
+            _xlentGray = Color.FromRgb(100, 101, 105);
+            _xlentOrange = Color.FromRgb(255, 170, 25);
             _advancedTimer = Resolver.Resolve<IAdvancedTimer>();
             _advancedTimer.initTimer(1000, (sender, args) =>
             {
@@ -66,7 +70,6 @@ namespace XlentLock
 
 
             _lockService = new LockService();
-
 
             NumberGrid.Children.Add(Buttons[0], 0, 1);
 
@@ -209,7 +212,7 @@ namespace XlentLock
 
         public Button[] Buttons
         {
-            get
+        get
             {
                 return _buttons ?? (_buttons = new[]
                        {
@@ -222,7 +225,7 @@ namespace XlentLock
                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                HeightRequest = ButtonWidth,
                                WidthRequest = ButtonWidth,
-                               BackgroundColor = Color.Gray,
+                               BackgroundColor = _xlentGray,
                                Command = ButtonClickedCommand,
                                CommandParameter = 1
                            },
@@ -234,7 +237,7 @@ namespace XlentLock
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                WidthRequest = ButtonWidth,
-                               BackgroundColor = Color.Gray,
+                               BackgroundColor = _xlentGray,
                                Command = ButtonClickedCommand,
                                CommandParameter = 2
                            },
@@ -246,7 +249,7 @@ namespace XlentLock
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                WidthRequest = ButtonWidth,
-                               BackgroundColor = Color.Gray,
+                               BackgroundColor = _xlentGray,
                                Command = ButtonClickedCommand,
                                CommandParameter = 3
                            },
@@ -259,7 +262,7 @@ namespace XlentLock
                                HorizontalOptions = LayoutOptions.FillAndExpand
                                ,
                                WidthRequest = ButtonWidth,
-                               BackgroundColor = Color.Gray,
+                               BackgroundColor = _xlentGray,
                                Command = ButtonClickedCommand,
                                CommandParameter = 4
                            },
@@ -271,7 +274,7 @@ namespace XlentLock
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                WidthRequest = ButtonWidth,
-                               BackgroundColor = Color.Gray,
+                               BackgroundColor = _xlentGray,
                                Command = ButtonClickedCommand,
                                CommandParameter = 5
                            },
@@ -283,7 +286,7 @@ namespace XlentLock
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                WidthRequest = ButtonWidth,
-                               BackgroundColor = Color.Gray,
+                               BackgroundColor = _xlentGray,
                                Command = ButtonClickedCommand,
                                CommandParameter = 6
                            },
@@ -295,7 +298,7 @@ namespace XlentLock
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                WidthRequest = ButtonWidth,
-                               BackgroundColor = Color.Gray,
+                               BackgroundColor = _xlentGray,
                                Command = ButtonClickedCommand,
                                CommandParameter = 7
                            },
@@ -308,7 +311,7 @@ namespace XlentLock
                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                MinimumWidthRequest = ButtonWidth,
                                MinimumHeightRequest = 30,
-                               BackgroundColor = Color.Gray,
+                               BackgroundColor = _xlentGray,
                                Command = ButtonClickedCommand,
                                CommandParameter = 8
                            },
@@ -321,20 +324,20 @@ namespace XlentLock
                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                MinimumWidthRequest = ButtonWidth,
                                MinimumHeightRequest = 30,
-                               BackgroundColor = Color.Gray,
+                               BackgroundColor = _xlentGray,
                                Command = ButtonClickedCommand,
                                CommandParameter = 9
                            },
                            new Button
                            {
-                               Text = "",
+                               Text = "CE",
                                FontSize = FontSize,
                                TextColor = Color.White,
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                MinimumWidthRequest = ButtonWidth,
-                               BackgroundColor = Color.Gray,
-                               Command = ButtonClickedCommand,
+                               BackgroundColor = _xlentOrange,
+                               Command = EraseCommand,
                                CommandParameter = 12
                            },
                            new Button
@@ -345,7 +348,7 @@ namespace XlentLock
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                MinimumWidthRequest = ButtonWidth,
-                               BackgroundColor = Color.Gray,
+                               BackgroundColor = _xlentGray,
                                Command = ButtonClickedCommand,
                                CommandParameter = 0
                            },
@@ -357,12 +360,13 @@ namespace XlentLock
                                VerticalOptions = LayoutOptions.FillAndExpand,
                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                MinimumWidthRequest = ButtonWidth,
-                               BackgroundColor = Color.Green,
+                               BackgroundColor = _xlentOrange,
                                Command = OkClickedCommand
                            }
                        });
             }
-            set { _buttons = value; }
+            set { _buttons = value;
+    }
         }
 
         public ICommand OkClickedCommand
@@ -401,7 +405,7 @@ namespace XlentLock
                         }
                         else
                         {
-                            ResponsLabel.Text = "Unvalid Input";
+                            ResponsLabel.Text = "Invalid Input";
                         }
                     }
                     catch (Exception ee)
@@ -571,14 +575,14 @@ namespace XlentLock
             {
                 ResponsLabel.Text = "YOU GUESSED CORRECT";
                 _advancedTimer.stopTimer();
-                await DisplayAlert("You Guessed Correct in " + time + "seconds", "Fill the form please", "OK");
+                await DisplayAlert("You guessed the correct number in " + time + " seconds", "Please fill in the competition form on one of our computers", "OK");
                 Reset();
             }
             else
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    var wantToPlayAgian = DisplayAlert("You Loose", "Try Agian!", "Yes", "No?");
+                    var wantToPlayAgian = DisplayAlert("You Loose", "Try Again?", "Yes", "No");
                     Reset();
                 });
             }

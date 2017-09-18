@@ -9,8 +9,12 @@ namespace XlentLock
 {
     public class App : Application
     {
+        private Color xlentGray;
+        private Color xlentOrange;
         public App()
         {
+            xlentGray = new Color(255, 170, 25);
+            xlentOrange = new Color(100, 101, 105);
             // The root page of your application
             var lockpage = new LockPage();
             MainPage = new NavigationPage(lockpage);
